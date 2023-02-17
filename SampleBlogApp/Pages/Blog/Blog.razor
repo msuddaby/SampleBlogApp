@@ -1,0 +1,39 @@
+﻿@page "/blog"
+@using SampleBlogApp.Data
+@using SampleBlogApp.Helpers;
+@using SampleBlogApp.Services.BLL
+@inject BlogPostServices BlogPostServices
+@inherits BaseComponentPage
+<h3>Blog</h3>
+<p>Latest posts</p>
+
+@BackButton
+
+
+@if (_blogPosts != null)
+{
+    @foreach (var item in _blogPosts)
+    {
+        <h4><a href="/blog/view/@item.Id">@item.Title</a></h4>
+        <span>Posted by - @item.User.UserName on @item.Date.ToString("D")</span>
+        
+    }
+}
+
+
+@code {
+    private List<BlogPostDTO>? _blogPosts;
+
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var result = await BlogPostServices.GetBlogPostsAsync();
+        if (result.Success)
+        {
+            _blogPosts = result.Data;
+        }
+    }
+
+}

@@ -1,0 +1,46 @@
+﻿@page "/blog/view/{Id:int}"
+@using SampleBlogApp.Services.BLL
+@using SampleBlogApp.Data
+@using SampleBlogApp.Helpers
+@inject BlogPostServices BlogPostServices
+@inherits BaseComponentPage
+
+@BackButton
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <p>@_errorMessage</p>
+}
+
+
+@if (BlogPost != null)
+{
+    <h3>@BlogPost.Title</h3>
+    <p>@BlogPost.Content</p>
+    <p>Posted by: @BlogPost.User.UserName</p>
+    <p>Posted on: @BlogPost.Date</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    public BlogPostDTO? BlogPost;
+    private string _errorMessage = string.Empty;
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        var result = await BlogPostServices.GetBlogPostByIdAsync(Id);
+
+        if (result.Success)
+        {
+            BlogPost = result.Data;
+        }
+        else
+        {
+            _errorMessage = result.Message;
+        }
+    }
+
+}

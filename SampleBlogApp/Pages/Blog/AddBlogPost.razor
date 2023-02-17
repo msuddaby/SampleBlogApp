@@ -1,0 +1,51 @@
+﻿@using SampleBlogApp.Data
+@using Microsoft.AspNetCore.Components
+@using SampleBlogApp.Services.BLL
+@using System.Security.Claims
+@inject BlogPostServices BlogPostServices;
+@page "/blog/add"
+@attribute [Authorize]
+
+<h3>Add Blog Post</h3>
+
+<EditForm Model="@BlogPost" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group mb-3">
+        <label for="Title">Title</label>
+        <InputText class="form-control" id="Title" @bind-Value="BlogPost.Title" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="Content">Content</label>
+        <InputTextArea class="form-control" id="Content" @bind-Value="BlogPost.Content" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Submit</button>
+</EditForm>
+
+
+@code {
+    private BlogPostDTO BlogPost { get; set; } = new BlogPostDTO();
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+
+    private async Task HandleValidSubmit()
+    {
+        if (AuthenticationState != null)
+        {
+            var authState = await AuthenticationState;
+            var user = authState.User;
+            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            BlogPost.User = new UserDTO { Id = userId };
+
+            var result = await BlogPostServices.CreateBlogPostAsync(BlogPost);
+
+        }
+
+
+
+    }
+
+}
