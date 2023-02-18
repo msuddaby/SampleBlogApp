@@ -4,21 +4,32 @@
 @using SampleBlogApp.Services.BLL
 @inject BlogPostServices BlogPostServices
 @inherits BaseComponentPage
+
+<AuthorizeView>
+    <Authorized>
+        <a class="btn btn-primary mb-3" href="/blog/add">Create Blog Post</a>
+    </Authorized>
+</AuthorizeView>
+
 <h3>Blog</h3>
-<p>Latest posts</p>
-
-@BackButton
-
+<p class="mb-3">Latest posts</p>
 
 @if (_blogPosts != null)
 {
-    @foreach (var item in _blogPosts)
+    foreach (var blogPost in _blogPosts)
     {
-        <h4><a href="/blog/view/@item.Id">@item.Title</a></h4>
-        <span>Posted by - @item.User.UserName on @item.Date.ToString("D")</span>
-        
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">@blogPost.Title</h5>
+                <p class="card-text blog-content mb-3">@blogPost.ShortContent</p>
+                <p class="card-text">Posted by: @blogPost.User.UserName</p>
+                <p class="card-text mb-3">Posted on: @blogPost.Date</p>
+                <a href="@($"/blog/view/{blogPost.Id}")" class="btn btn-secondary">View</a>
+            </div>
+        </div>
     }
 }
+
 
 
 @code {

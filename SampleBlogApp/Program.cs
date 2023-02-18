@@ -32,6 +32,7 @@ namespace SampleBlogApp
             builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
             builder.Services.AddSingleton<WeatherForecastService>();
             builder.Services.AddTransient<BlogPostServices>();
+            builder.Services.AddTransient<AdminServices>();
             builder.Services.AddScoped<PageHistoryState>();
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
             

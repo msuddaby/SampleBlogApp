@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,7 @@ namespace SampleBlogApp.Services.BLL
         {
             try
             {
-                var result = await _mapper.ProjectTo<BlogPostDTO>(_context.BlogPosts.Include(x => x.User))
+                var result = await _mapper.ProjectTo<BlogPostDTO>(_context.BlogPosts.OrderByDescending(x => x.Date).Include(x => x.User))
                     .ToListAsync();
 
                 if (result.Count == 0)
@@ -49,6 +50,7 @@ namespace SampleBlogApp.Services.BLL
             {
                 return ActionResultHelper.Fail("User is required.");
             }
+            blogPostDTO.Date = DateTime.Now;
             var blogPost = _mapper.Map<BlogPost>(blogPostDTO);
             blogPost.User = await _context.Users.FirstOrDefaultAsync(x => x.Id == blogPostDTO.User.Id);
 

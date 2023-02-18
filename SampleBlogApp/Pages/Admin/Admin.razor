@@ -1,0 +1,29 @@
+﻿@page "/admin"
+
+@inject AdminServices AdminServices
+<h3>Admin</h3>
+
+@if (_users != null)
+{
+    @foreach (var user in _users)
+    {
+        <p>@user.UserName</p>
+    }
+}
+
+@code {
+    private List<UserDTO> _users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await AdminServices.GetUsersAsync();
+
+        if (result.Success)
+        {
+            _users = result.Data;
+        }
+        
+        //return base.OnInitializedAsync();
+    }
+
+}

@@ -5,7 +5,7 @@
 @inject BlogPostServices BlogPostServices
 @inherits BaseComponentPage
 
-@BackButton
+
 
 @if (!string.IsNullOrEmpty(_errorMessage))
 {
@@ -15,10 +15,16 @@
 
 @if (BlogPost != null)
 {
-    <h3>@BlogPost.Title</h3>
-    <p>@BlogPost.Content</p>
-    <p>Posted by: @BlogPost.User.UserName</p>
-    <p>Posted on: @BlogPost.Date</p>
+    <div class="card">
+        <div class="card-header">
+            <h3>@BlogPost.Title</h3>
+            <p>Posted by: @BlogPost.User.UserName on @BlogPost.Date.ToString("D")</p>
+        </div>
+        <div class="card-body">
+            <p class="blog-content">@BlogPost.Content</p>
+        </div>
+        <div class="card-footer">@BackButton</div>
+    </div>
 }
 
 @code {
