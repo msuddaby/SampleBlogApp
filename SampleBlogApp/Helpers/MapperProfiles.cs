@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SampleBlogApp.Data;
+using SampleBlogApp.Services.Entities;
 
 namespace SampleBlogApp.Helpers
 {
@@ -12,6 +13,9 @@ namespace SampleBlogApp.Helpers
             
             CreateMap<ApplicationUser, UserDTO>();
             CreateMap<UserDTO, ApplicationUser>();
+
+            CreateMap<ApplicationRole, RoleDTO>();
+            CreateMap<RoleDTO, ApplicationRole>();
 
             
             //CreateMap<ImagePost, ImagePostDTO>();

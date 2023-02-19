@@ -11,22 +11,30 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore.Internal;
 using SampleBlogApp.Helpers;
 using SampleBlogApp.Services.BLL;
+using SampleBlogApp.Services.Entities;
+using SampleBlogApp.Services.Helpers;
 
 namespace SampleBlogApp
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("SampleBlogApp.Services")));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                })
+                .AddRoles<ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
@@ -37,9 +45,20 @@ namespace SampleBlogApp
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
             
 
-
+            
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
+                var seeder = new SeedData(roleManager);
+
+                await seeder.SeedRolesAsync();
+                await seeder.SeedRoleClaimsAsync();
+
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -65,7 +84,7 @@ namespace SampleBlogApp
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");
 
-            app.Run();
+            await app.RunAsync();
         }
     }
 }

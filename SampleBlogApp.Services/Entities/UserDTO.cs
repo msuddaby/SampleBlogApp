@@ -1,4 +1,6 @@
-﻿namespace SampleBlogApp.Data
+﻿
+
+namespace SampleBlogApp.Data
 {
     public class UserDTO
     {

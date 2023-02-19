@@ -1,29 +1,75 @@
 ﻿@page "/admin"
+@using SampleBlogApp.Services.Entities
 
 @inject AdminServices AdminServices
 <h3>Admin</h3>
 
+<Modal @ref="EditUserModal">
+    <Title>Edit user: </Title>
+    <Body><EditUser User="currentUser"></EditUser></Body>
+</Modal>
+
+<h4>Users</h4>
 @if (_users != null)
 {
     @foreach (var user in _users)
     {
-        <p>@user.UserName</p>
+        <div class="card mb-3">
+            <div class="card-header"><p>@user.UserName</p></div>
+            <div class="card-body">
+                <button class="btn btn-primary" @onclick="() => { OpenModal(user); }">Edit</button>
+            </div>
+        </div>
+        
     }
 }
+<h4>Roles</h4>
+<button class="btn btn-primary mb-3">Add New Role</button>
+@if (_roles != null)
+{
+    @foreach (var role in _roles)
+    {
+        <div class="card mb-3">
+            <div class="card-header"><p>@role.Name</p></div>
+            <div class="card-body">
+                
+            </div>
+        </div>
+
+    }
+}
+<h4>Claims</h4>
+
 
 @code {
     private List<UserDTO> _users;
+    private List<RoleDTO> _roles;
+
+    private UserDTO currentUser;
+
+    private Modal? EditUserModal { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await AdminServices.GetUsersAsync();
-
-        if (result.Success)
+        var userResult = await AdminServices.GetUsersAsync();
+        var roleResult = await AdminServices.GetAllRolesAsync();
+        if (userResult.Success)
         {
-            _users = result.Data;
+            _users = userResult.Data;
+        }
+        if (roleResult.Success)
+        {
+            _roles = roleResult.Data;
         }
         
         //return base.OnInitializedAsync();
+    }
+
+    private async Task OpenModal(UserDTO currentUser)
+    {
+        this.currentUser = currentUser;
+
+        await EditUserModal.OpenModal();
     }
 
 }

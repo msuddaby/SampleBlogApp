@@ -1,0 +1,52 @@
+﻿
+@inject AdminServices AdminServices
+
+@if (Roles != null)
+{
+    <h3>Current Roles:</h3>
+    @foreach (var role in Roles)
+    {
+        <p>@role</p>
+    }
+    <h3>Add Role:</h3>
+    <select>
+        @foreach (var role in AllRoles)
+        {
+            <option value="@role">@role</option>
+        }
+    </select>
+    
+}
+
+
+@code {
+    [Parameter]
+    public UserDTO? User { get; set; }
+
+    private List<string> Roles { get; set; }
+    private List<RoleDTO> AllRoles { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await AdminServices.GetUserRolesAsync(User);
+        var rolesResult = await AdminServices.GetAllRolesAsync();
+
+        
+        if (result.Success)
+        {
+            Roles = result.Data;
+        }
+        else
+        {
+            throw new ApplicationException(result.Message);
+        }
+        if (rolesResult.Success)
+        {
+            AllRoles = rolesResult.Data;
+        }
+        else
+        {
+            throw new ApplicationException(rolesResult.Message);
+        }
+    }
+}
