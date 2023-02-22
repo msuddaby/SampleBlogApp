@@ -1,0 +1,27 @@
+﻿<EditForm Model="@BlogPost" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group mb-3">
+        <label for="Title">Title</label>
+        <InputText class="form-control" id="Title" @bind-Value="BlogPost.Title" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="Content">Content</label>
+        <InputTextArea class="form-control" id="Content" @bind-Value="BlogPost.Content" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Submit</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public BlogPostDTO BlogPost { get; set; }
+
+    [Parameter]
+    public EventCallback<BlogPostDTO> OnValidSubmit { get; set; }
+
+    private void HandleValidSubmit()
+    {
+        OnValidSubmit.InvokeAsync(BlogPost);
+    }
+}

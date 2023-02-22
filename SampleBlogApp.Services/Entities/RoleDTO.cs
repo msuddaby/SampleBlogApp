@@ -13,6 +13,6 @@ namespace SampleBlogApp.Services.Entities
         public string Id { get; set; }
         public string Name { get; set; }
         [NotMapped]
-        public Dictionary<string, Permissions> Permissions { get; set; }
+        public Dictionary<string, string> Permissions { get; set; }
     }
 }

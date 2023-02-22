@@ -84,5 +84,42 @@ namespace SampleBlogApp.Services.BLL
 
             return ActionResultHelper.Success(result);
         }
+
+        public async Task<ActionResult> UpdateBlogPost(BlogPostDTO blogPostDTO)
+        {
+            if (blogPostDTO.User == null)
+            {
+                return ActionResultHelper.Fail("User not found.");
+            }
+
+            var post = await _context.BlogPosts.Where(x => x.Id == blogPostDTO.Id).Include(x => x.User).FirstOrDefaultAsync();
+
+            if (post == null)
+            {
+                return ActionResultHelper.Fail("That blog post was not found");
+            }
+
+            var mapped = _mapper.Map(blogPostDTO, post);
+            if (mapped != null)
+            {
+                try
+                {
+                    _context.Attach(post.User);
+
+                    _context.Entry(post).State = EntityState.Modified;
+
+                    await _context.SaveChangesAsync();
+                    return ActionResultHelper.Success();
+                }
+                catch (Exception e)
+                {
+                    return ActionResultHelper.Fail("The database update failed: " + e.Message);
+                }
+                
+            }
+
+            return ActionResultHelper.Fail("There was an internal server error.");
+
+        }
     }
 }

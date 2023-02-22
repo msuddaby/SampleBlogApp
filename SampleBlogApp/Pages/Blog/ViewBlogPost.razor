@@ -1,8 +1,6 @@
 ﻿@page "/blog/view/{Id:int}"
-@using SampleBlogApp.Services.BLL
-@using SampleBlogApp.Data
-@using SampleBlogApp.Helpers
 @inject BlogPostServices BlogPostServices
+@using SampleBlogApp.Services.Helpers
 @inherits BaseComponentPage
 
 
@@ -23,7 +21,14 @@
         <div class="card-body">
             <p class="blog-content">@BlogPost.Content</p>
         </div>
-        <div class="card-footer">@BackButton</div>
+        <div class="card-footer">
+            @BackButton
+            <AuthorizeView Policy="@Permissions.CanEdit">
+                <Authorized>
+                    <a class="btn btn-secondary" href="/blog/edit/@Id">Edit</a>
+                </Authorized>
+            </AuthorizeView>
+        </div>
     </div>
 }
 

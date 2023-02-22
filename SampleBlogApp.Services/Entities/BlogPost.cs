@@ -1,4 +1,6 @@
-﻿namespace SampleBlogApp.Data
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SampleBlogApp.Data
 {
     public class BlogPost: Post
     {
@@ -8,6 +10,7 @@
 
     public class BlogPostDTO : PostDTO
     {
+        [Required]
         public string Content { get; set; }
 
         public string ShortContent

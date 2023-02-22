@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace SampleBlogApp.Services.Helpers
 {
-    public enum Permissions
+    public static class Permissions
     {
-        CanEdit,
-        CanDelete,
-        CanCreate
+        public const string CanEdit = "CanEdit";
+        public const string CanDelete = "CanDelete";
+        public const string CanCreate = "CanCreate";
     }
 }

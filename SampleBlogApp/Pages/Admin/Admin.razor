@@ -6,7 +6,7 @@
 
 <Modal @ref="EditUserModal">
     <Title>Edit user: </Title>
-    <Body><EditUser User="currentUser"></EditUser></Body>
+    <Body><EditUser @ref="ChangeUser"></EditUser></Body>
 </Modal>
 
 <h4>Users</h4>
@@ -46,6 +46,7 @@
     private List<RoleDTO> _roles;
 
     private UserDTO currentUser;
+    private EditUser ChangeUser;
 
     private Modal? EditUserModal { get; set; }
 
@@ -67,7 +68,7 @@
 
     private async Task OpenModal(UserDTO currentUser)
     {
-        this.currentUser = currentUser;
+        await ChangeUser.ChangeUser(currentUser);
 
         await EditUserModal.OpenModal();
     }

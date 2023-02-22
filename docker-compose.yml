@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  sampleblogapp:
+    image: ${DOCKER_REGISTRY-}sampleblogapp
+    build:
+      context: .
+      dockerfile: SampleBlogApp/Dockerfile
+
+  db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    ports:
+        - "1433:1433"
+    environment:
+        SA_PASSWORD: "changeme"
+        ACCEPT_EULA: "Y"

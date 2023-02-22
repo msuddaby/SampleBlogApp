@@ -22,9 +22,9 @@ namespace SampleBlogApp.Services.Helpers
             new ApplicationRole { Name = "Admin", NormalizedName = "ADMIN",Style = "color: red" },
         };
 
-        public static readonly Dictionary<string, List<Permissions>> RoleClaims = new Dictionary<string, List<Permissions>>
+        public static readonly Dictionary<string, List<string>> RoleClaims = new Dictionary<string, List<string>>
         {
-            { "Admin", new List<Permissions> {Permissions.CanCreate, Permissions.CanDelete, Permissions.CanEdit} }
+            { "Admin", new List<string> {Permissions.CanCreate, Permissions.CanDelete, Permissions.CanEdit} }
         };
 
         public async Task SeedRolesAsync()

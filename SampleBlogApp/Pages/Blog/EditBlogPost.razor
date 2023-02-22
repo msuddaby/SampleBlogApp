@@ -1,0 +1,41 @@
+﻿@page "/blog/edit/{Id:int}"
+@using SampleBlogApp.Services.Helpers
+@inject BlogPostServices BlogPostServices
+@inherits BaseComponentPage
+@attribute [Authorize(Policy = Permissions.CanEdit)]
+
+@if (EditBlog != null)
+{
+    <BlogFormComponent BlogPost="EditBlog" OnValidSubmit="OnValidSubmit" />
+    @BackButton
+}
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private BlogPostDTO? EditBlog { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await BlogPostServices.GetBlogPostByIdAsync(Id);
+        if (result.Success)
+        {
+            EditBlog = result.Data;
+        }
+    }
+
+    private async Task OnValidSubmit(BlogPostDTO valid)
+    {
+        var result = await BlogPostServices.UpdateBlogPost(valid);
+        if (result.Success)
+        {
+            _navManager.NavigateTo($"/blog/view/{Id}");
+        }
+        else
+        {
+            Console.WriteLine(result.Message);
+        }
+    }
+
+}

@@ -1,7 +1,7 @@
 ﻿
 @inject AdminServices AdminServices
 
-@if (Roles != null)
+@if (Roles != null && AllRoles != null)
 {
     <h3>Current Roles:</h3>
     @foreach (var role in Roles)
@@ -9,13 +9,14 @@
         <p>@role</p>
     }
     <h3>Add Role:</h3>
-    <select>
+    <select @onchange="OnSelectChange">
+        <option selected>-- PICK A ROLE --</option>
         @foreach (var role in AllRoles)
         {
-            <option value="@role">@role</option>
+            <option value="@role.Id">@role.Name</option>
         }
     </select>
-    
+    <button class="btn btn-primary" @onclick="AddUserRole">Change</button>
 }
 
 
@@ -25,13 +26,41 @@
 
     private List<string> Roles { get; set; }
     private List<RoleDTO> AllRoles { get; set; }
+    private RoleDTO selectedRole { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    private void OnSelectChange(ChangeEventArgs e)
     {
-        var result = await AdminServices.GetUserRolesAsync(User);
-        var rolesResult = await AdminServices.GetAllRolesAsync();
+        var value = e.Value.ToString();
+        var roledto = AllRoles.FirstOrDefault(x => x.Id == value);
+        if (roledto != null)
+        {
+            selectedRole = roledto;
+        }
+    }
 
-        
+    private async Task AddUserRole()
+    {
+        if (selectedRole != null)
+        {
+            await AdminServices.AddUserToRoleAsync(User, selectedRole);
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (User != null)
+        {
+            await SetNewUser(User);
+        }
+    }
+
+    private async Task SetNewUser(UserDTO user)
+    {
+        var result = await AdminServices.GetUserRolesAsync(user);
+        var rolesResult = await AdminServices.GetAllRolesAsync();
+        User = user;
+
+
         if (result.Success)
         {
             Roles = result.Data;
@@ -48,5 +77,12 @@
         {
             throw new ApplicationException(rolesResult.Message);
         }
+    }
+
+    public async Task ChangeUser(UserDTO user)
+    {
+        await SetNewUser(user);
+
+        StateHasChanged();
     }
 }

@@ -84,6 +84,30 @@ namespace SampleBlogApp.Services.BLL
             }
         }
 
+        public async Task<ActionResult> AddUserToRoleAsync(UserDTO inuser, RoleDTO inrole)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(inuser.Id);
+                if (user == null)
+                {
+                    return ActionResultHelper.Fail("User not found.");
+                }
+
+                var result = await _userManager.AddToRoleAsync(user, inrole.Name);
+                if (result.Succeeded)
+                {
+                    return ActionResultHelper.Success();
+                }
+
+                return ActionResultHelper.Fail("Could not add to role.");
+            }
+            catch (Exception e)
+            {
+                throw new ApplicationException(e.Message);
+                //return ActionResultHelper.Fail(e.Message);
+            }
+        }
         public async Task<ActionResult> CreateRoleAsync(RoleDTO roleDTO)
         {
             try

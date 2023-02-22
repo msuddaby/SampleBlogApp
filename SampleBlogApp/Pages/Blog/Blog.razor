@@ -2,10 +2,11 @@
 @using SampleBlogApp.Data
 @using SampleBlogApp.Helpers;
 @using SampleBlogApp.Services.BLL
+@using SampleBlogApp.Services.Helpers
 @inject BlogPostServices BlogPostServices
 @inherits BaseComponentPage
 
-<AuthorizeView>
+<AuthorizeView Policy="@Permissions.CanCreate">
     <Authorized>
         <a class="btn btn-primary mb-3" href="/blog/add">Create Blog Post</a>
     </Authorized>

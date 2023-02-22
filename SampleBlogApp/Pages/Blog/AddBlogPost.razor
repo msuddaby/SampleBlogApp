@@ -2,26 +2,15 @@
 @using Microsoft.AspNetCore.Components
 @using SampleBlogApp.Services.BLL
 @using System.Security.Claims
+@inherits BaseComponentPage
 @inject BlogPostServices BlogPostServices;
 @page "/blog/add"
 @attribute [Authorize]
 
 <h3>Add Blog Post</h3>
+<BlogFormComponent BlogPost="BlogPost" OnValidSubmit="HandleValidSubmit" />
 
-<EditForm Model="@BlogPost" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="form-group mb-3">
-        <label for="Title">Title</label>
-        <InputText class="form-control" id="Title" @bind-Value="BlogPost.Title" />
-    </div>
-    <div class="form-group mb-3">
-        <label for="Content">Content</label>
-        <InputTextArea class="form-control" id="Content" @bind-Value="BlogPost.Content" />
-    </div>
-
-    <button class="btn btn-primary" type="submit">Submit</button>
-</EditForm>
+@BackButton
 
 
 @code {
@@ -31,7 +20,7 @@
     private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 
-    private async Task HandleValidSubmit()
+    private async Task HandleValidSubmit(BlogPostDTO valid)
     {
         if (AuthenticationState != null)
         {
@@ -40,7 +29,15 @@
             var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
             BlogPost.User = new UserDTO { Id = userId };
 
-            var result = await BlogPostServices.CreateBlogPostAsync(BlogPost);
+            var result = await BlogPostServices.CreateBlogPostAsync(valid);
+            if (result.Success)
+            {
+                _navManager.NavigateTo($"/blog/view/{result.Data}");
+            }
+            else
+            {
+                //Error stuff
+            }
 
         }
 
