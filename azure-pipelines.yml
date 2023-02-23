@@ -24,5 +24,6 @@ stages:
       displayName: Build an image
       inputs:
         command: 'build'
-        Dockerfile: '**/SampleBlogApp/Dockerfile'
+        Dockerfile: './SampleBlogApp/Dockerfile'
+        buildContext: '.'
         tags: '$(tag)'
