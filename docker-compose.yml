@@ -3,6 +3,8 @@ version: '3.4'
 services:
   sampleblogapp:
     image: msuddaby/sampleblogapp:latest
+    ports:
+        - "80:5600"
     build:
       context: .
       dockerfile: SampleBlogApp/Dockerfile
@@ -11,9 +13,14 @@ services:
 
   db:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
+    volumes:
+        - dbdata:/var/opt/mssql
     env_file:
         - db/sqlserver.env
         - db/sapass.env
+
+volumes:
+  dbdata:
   
 secrets:
     db-password:
