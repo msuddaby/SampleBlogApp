@@ -6,11 +6,17 @@ services:
     build:
       context: .
       dockerfile: SampleBlogApp/Dockerfile
+    secrets:
+        - db-password
 
   db:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     ports:
         - "1433:1433"
-    environment:
-        SA_PASSWORD: "changeme"
-        ACCEPT_EULA: "Y"
+    env_file:
+        - db/sqlserver.env
+        - db/sapass.env
+  
+secrets:
+    db-password:
+        file: db/sapass.env

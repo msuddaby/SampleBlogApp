@@ -14,6 +14,7 @@ using SampleBlogApp.Services.BLL;
 using SampleBlogApp.Services.Entities;
 using SampleBlogApp.Services.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 
 namespace SampleBlogApp
@@ -29,6 +30,23 @@ namespace SampleBlogApp
             // Add services to the container.
             Console.WriteLine($"ENV: {builder.Environment.EnvironmentName}");
 
+
+            try
+            {
+                string dockerConnectionString = File.ReadAllText("/run/secrets/db-password");
+
+                string[] saPassword = dockerConnectionString.Split("MSSQL_SA_PASSWORD=");
+
+                string newConnectionString = $"Server=db;Database=master;TrustServerCertificate=True;User=sa;Password={saPassword[1]};";
+
+                builder.Configuration["ConnectionStrings:DefaultConnection"] = newConnectionString;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Looks like we aren't using docker. Switching to local connection string.");
+            }
+
+            
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString, b => b.MigrationsAssembly("SampleBlogApp.Services")));
