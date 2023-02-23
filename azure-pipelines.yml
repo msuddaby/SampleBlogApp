@@ -23,7 +23,6 @@ stages:
     - task: Docker@2
       displayName: Build an image
       inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/SampleBlogApp/Dockerfile'
-        tags: |
-          $(tag)
+        command: 'build'
+        Dockerfile: '**/SampleBlogApp/Dockerfile'
+        tags: '$(tag)'
