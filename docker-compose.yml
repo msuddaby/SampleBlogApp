@@ -3,8 +3,12 @@ version: '3.4'
 services:
   sampleblogapp:
     image: msuddaby/sampleblogapp:latest
+    environment:
+        - ASPNETCORE_URLS=http://+:80
     ports:
-        - "80:5600"
+        - "5600:80"
+    expose:
+        - "5600"
     build:
       context: .
       dockerfile: SampleBlogApp/Dockerfile
@@ -21,7 +25,7 @@ services:
 
 volumes:
   dbdata:
-  
+
 secrets:
     db-password:
         file: db/sapass.env
